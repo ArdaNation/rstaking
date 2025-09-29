@@ -1,0 +1,92 @@
+{
+  "app": {
+    "title": "New Staking Platform",
+    "home": "Home",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "language": "Language"
+  },
+  "nav": {
+    "contracts": "Contracts",
+    "withdraw": "Withdraw",
+    "history": "History",
+    "deposit": "Deposit",
+    "profile": "Profile",
+    "support": "Support"
+  },
+  "home": {
+    "welcome": "Welcome to the staking platform"
+  },
+  "auth": {
+    "name": "Name",
+    "surname": "Surname",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "login": "Login",
+    "register": "Register",
+    "errors": {
+      "required": "This field is required",
+      "email": "Enter a valid email",
+      "passwordsMismatch": "Passwords do not match"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "goHome": "Go Home"
+  },
+  "contracts": {
+    "title": "Contracts",
+    "staking": "Staking",
+    "type": "Type",
+    "amount": "Amount",
+    "buy": "Buy",
+    "active": "Active Contracts",
+    "completed": "Completed Contracts",
+    "loading": "Loading...",
+    "plans": {
+      "yearly": {
+        "title": "Annual Staking",
+        "yield": "30% per month",
+        "desc": "Minimum 30 XRP"
+      },
+      "monthly": {
+        "title": "Monthly Staking",
+        "yield": "20% per month",
+        "desc": "Minimum 30 XRP"
+      },
+      "unlimited": {
+        "title": "Flexible Staking",
+        "yield": "9% per month",
+        "desc": "Minimum 30 XRP"
+      }
+    },
+    "stake": "Stake",
+    "yourBalance": "You balance:",
+    "monthlyProfit": "Monthly profit"
+  },
+  "finance": {
+    "title": "Withdraw",
+    "tabs": {
+      "withdraw": "Withdraw",
+      "invoices": "Invoices"
+    },
+    "withdraw": {
+      "address": "Destination address",
+      "memo": "Memo (optional)",
+      "request": "Request withdraw",
+      "history": "Withdraw history"
+    },
+    "invoices": {
+      "request": "Create invoice",
+      "address": "Pay to address",
+      "memo": "Memo",
+      "amount": "Amount"
+    }
+  }
+}
+
+

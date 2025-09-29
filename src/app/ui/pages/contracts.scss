@@ -1,0 +1,449 @@
+.contracts { display: flex; flex-direction: column; gap: clamp(16px, 3vw, 24px);  }
+.section-desc {
+  font-family: Inter;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0;
+  margin: 25px 0 10px 0;
+}
+.plans-wrap { background: #fff; padding: 16px 20px; border-radius: 12px; width: 100%; display: flex; align-items: center; }
+.plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; width: 100%; }
+.plan { text-align: left; padding: 20px; border-radius: 8px; background: #F2F2F2; cursor: pointer; border: 2px solid transparent; display: flex; flex-direction: column; min-height: 134px; gap: 16px; justify-content: center; outline: none; box-shadow: none; }
+.plan:focus, .plan:focus-visible, .plan:focus-within { outline: none; box-shadow: none; border-color: transparent; }
+.plan--active { border-color: #0066F7; background: #F2F2F2; outline: none; box-shadow: none; }
+.plan--active:focus, .plan--active:focus-visible, .plan--active:focus-within { outline: none; box-shadow: none; border-color: #0066F7; }
+.plan__info { display: flex; flex-direction: column; gap: 8px; }
+.plan__title { font-size: 20px; color: #0052E3;  font-weight: 600;   }
+.plan__yield { font-size: 16px; color: #1F2225;  font-weight: 600;  }
+.plan__desc { color: #1F2225; font-size: 14px; }
+.plan__stickers { display: flex; flex-direction: row; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.plan__sticker { 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+  background: #E6E8EB; 
+  border-radius: 12px; 
+  padding: 4px 8px; 
+  font-size: 12px; 
+  color: #1F2225; 
+  font-weight: 400;
+}
+.plan__sticker-icon { 
+  width: 12px; 
+  height: 12px; 
+  flex-shrink: 0;
+}
+
+.stake { position: relative; }
+.stake__inner { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; background: #0066F7; color: #fff; padding: 12px 20px; border-radius: 12px; min-height: 78px; width: 100%; overflow: hidden; }
+.stake__meta { display: none; }
+.stake__balance { font-weight: 600; font-size: 14px; }
+.stake__balance strong { font-size: 22px; }
+.stake__form { display: flex; align-items: center; }
+.stake__form input { width: clamp(220px, 35vw, 420px); max-width: 100%; padding: 10px 12px; border-radius: 8px; border: none; background-color: #fff; color: #111827; height: 44px;}
+.stake__input-wrap { 
+  position: relative; 
+  display: inline-flex; 
+  align-items: center; 
+  background: #fff; 
+  border-radius: 8px; 
+  border: none; 
+  overflow: hidden;
+}
+.stake__input-wrap input { 
+  border: none; 
+  background: transparent; 
+  outline: none;
+}
+.stake__form button { margin-left: 8px; padding: 10px 16px; border-radius: 8px; border: 0; background: #fff; color: #111827; height: 44px; width: 112px;}
+.stake__form button .desktop-text { display: inline; }
+.stake__form button .mobile-text { display: none; }
+.stake__input-wrap:focus-within { outline: 2px solid #4c96fe; outline-offset: 0; }
+.stake__msg { grid-column: 1 / -1; margin-top: 8px; }
+
+.my { display: grid; gap: 12px; }
+.my__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.stat { background: #fff; border: 1px solid #E6E8EB; border-radius: 12px; padding: 16px; display: grid; gap: 8px; }
+.stat__title { color: #0052E3; font-weight: 600; font-size: 14px; }
+.stat__value { font-weight: 700; font-size: 22px; color: #111827; }
+.desktop-title { display: inline; }
+.mobile-title { display: none; }
+.desktop-only { display: block; }
+.my__tabs { display: flex; gap: 12px; border-bottom: 1px solid #eee; }
+.my__tabs button { border: none; background: transparent; padding: 8px 0; color: #111827; border-radius: 0px; }
+.my__tabs .active { color: #1d4ed8; border-bottom: 2px solid #1d4ed8; }
+.my__grid { display: grid; gap: 12px; }
+.my__grid .placeholder { text-align: center; margin-top: 50px; justify-self: center; }
+.card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 12px; display: grid; gap: 12px; }
+.card__head { display: grid; gap: 8px; }
+.card__title { display: flex; justify-content: space-between; align-items: flex-start; }
+.card__contract-info { display: flex; flex-direction: column; gap: 4px; }
+.card__contract-number { font-weight: 600; color: #111827; font-size: 16px; }
+.card__contract-type { font-family: Inter;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color:  #1F2225;
+  margin: 10px 0;
+     }
+.card__creation-date { font-size: 12px; color: #6b7280; text-align: right; }
+.card__next-reward { text-align: right; margin-bottom: 8px; display: flex; justify-content: space-between; }
+.card__next-reward span { font-family: Inter;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 10px;
+  letter-spacing: 0%;  
+}
+.card__next-reward span strong { font-family: Inter;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 10px;
+  letter-spacing: 0%;
+   }
+.card__expand { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.card__next { font-size: 12px; color: #6b7280; }
+.card__icon { transition: transform 0.2s ease; }
+.card__icon--expanded { transform: rotate(180deg); }
+.mobile-only { display: none; }
+.card__progress .bar { background: #e5e7eb; height: 15px; border-radius: 999px; overflow: hidden; }
+.card__progress .bar span { display: block; height: 100%; background: #2563eb; }
+.card__progress .meta { text-align: right; font-size: 12px; color: #6b7280; }
+.card__details { overflow: hidden; max-height: 0; transition: max-height 0.3s ease, padding 0.3s ease; }
+.card__details--expanded { max-height: 200px; padding-top: 12px; }
+.card__info { display: grid; gap: 8px; margin-bottom: 12px; }
+.card__row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+.card__row span:first-child { 
+  font-family: Inter;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #1F2225;
+  text-align: left;
+}
+.card__row span:last-child { 
+  font-family: Inter;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #8F8F90;
+  text-align: right;
+}
+/* Desktop unstake button */
+.card__unstake {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 12px;
+}
+
+.btn--unstake { 
+  background: #DEE6F2; 
+  color: #0052E3;
+  border: none; 
+  width: 114px;
+  height: 44px;
+  border-radius: 10px; 
+  padding: 10px 24px;
+  cursor: pointer;
+  font-family: Inter;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn--resume {
+  background: #DEE6F2;
+  color: #0052E3;
+  border: none;
+  min-width: 160px;
+  height: 44px;
+  border-radius: 10px;
+  padding: 10px 24px;
+  cursor: pointer;
+  font-family: Inter;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1024px) {
+  .plans-wrap { background: #fff; padding: 20px; height: auto; min-height: unset; border-radius: 12px; }
+  /* Show all three plans at once in a single column card list look */
+  .plans { grid-template-columns: 1fr; gap: 20px; }
+  .plan { background: #F7F7F8; border-color: transparent; min-height: 80px; padding: 12px; gap: 6px; outline: none; box-shadow: none; }
+  .plan:focus, .plan:focus-visible, .plan:focus-within { outline: none; box-shadow: none; border-color: transparent; }
+  .plan--active { border-color: #0066F7; background: #F2F2F2; outline: none; box-shadow: none; }
+  .plan--active:focus, .plan--active:focus-visible, .plan--active:focus-within { outline: none; box-shadow: none; border-color: #0066F7; }
+  .plan__info { gap: 4px; }
+  .plan__stickers { gap: 4px; margin-top: 6px; flex-direction: row; }
+  .plan__sticker { padding: 3px 6px; font-size: 11px; }
+  .plan__sticker-icon { width: 10px; height: 10px; }
+
+  /* Buy block: light card with blue CTA as in mobile mock */
+  .stake__inner { grid-template-columns: 1fr; background: #fff; color: #111827; border: 1px solid #E6E8EB; }
+  .stake__balance { display: none; }
+  .stake__meta { display: grid; gap: 8px; margin-top: 4px; }
+  .stake__row  { display: flex; justify-content: space-between; 
+  }
+  .stake__row .label { display: flex; justify-content: space-between; 
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+    
+  }
+  .stake__row .value { font-family: Inter;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 24px;
+     }
+  .stake__form { flex-direction: column; gap: 12px; }
+  .stake__input-wrap { width: 100%; border: 1px solid #E6E8EB; }
+  .stake__form input { width: 100%; max-width: 100%; height: 44px; border: none; }
+  .stake__form button { background: #0066F7; color: #fff; height: 44px; width: 100%; margin-left: 0; margin-top: 0; }
+  .stake__form button .desktop-text { display: none; }
+  .stake__form button .mobile-text { display: inline; }
+  // .stake__form input { background-color: #fff;}
+  /* Mobile: keep default blue input focus inside stake__form */
+  .stake__input-wrap:focus-within { outline: 2px solid #0066F7; }
+
+  /* Mobile stats layout */
+  .my__stats { grid-template-columns: 1fr; gap: 12px; }
+  .stat__value { font-size: 24px; }
+  .desktop-title { display: none; }
+  .mobile-title { display: inline; }
+  .desktop-only { display: none; }
+  .mobile-only { display: block; }
+  
+  /* Mobile card layout with expand/collapse */
+  .card__head { display: flex; justify-content: space-between; align-items: flex-start; }
+  .card__title { flex: 1; }
+  .card__contract-info { flex-direction: row; gap: 8px; align-items: center; }
+  .card__contract-number { font-size: 14px; }
+  .card__contract-type { font-size: 12px; }
+  .card__creation-date { display: none; }
+  .card__next-reward { display: none; }
+  
+  /* Mobile unstake button styles */
+  .btn--unstake {
+    width: 81px;
+    height: 28px;
+    border-radius: 4px;
+    padding: 18px 24px;
+    font-size: 12px;
+    color: #0052E3;
+  }
+
+  .btn--resume {
+    min-width: 140px;
+    height: 32px;
+    border-radius: 6px;
+    padding: 0 16px;
+    font-size: 12px;
+    color: #0052E3;
+  }
+  
+  /* Mobile next reward in top right corner */
+  .card__next-reward-mobile {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #8F8F90;
+    text-align: right;
+  }
+  
+  /* Mobile staked amount under progress bar */
+  .card__staked-amount {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #1F2225;
+  }
+  
+  /* Mobile progress numbers */
+  .card__progress-numbers {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #8F8F90;
+    text-align: right;
+  }
+
+  /* Mobile unstake modal - bottom sheet */
+  .unstake-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .unstake-modal__content {
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    max-height: 60vh;
+    transform: translateY(0);
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .unstake-modal__head {
+    padding: 20px 20px 16px;
+    position: relative;
+  }
+
+  // .unstake-modal__head::before {
+  //   content: '';
+  //   position: absolute;
+  //   top: 8px;
+  //   left: 50%;
+  //   transform: translateX(-50%);
+  //   width: 40px;
+  //   height: 4px;
+  //   background: #d1d5db;
+  //   border-radius: 2px;
+  // }
+
+  .unstake-modal__foot {
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 20px 20px;
+  }
+
+  .btn--secondary,
+  .btn--unstake-confirm {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 16px;
+    flex: none;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Completed tab stats - 2 columns layout */
+.my__stats--completed { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+@media (max-width: 1024px) {
+  .my__stats--completed { grid-template-columns: 1fr; }
+}
+
+.under_progress {display: flex; justify-content: space-between; }
+
+/* Unstake Modal Styles */
+.unstake-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+}
+
+.unstake-modal__content {
+  background: #fff;
+  border-radius: 12px;
+  width: min(560px, 96vw);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.unstake-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E6E8EB;
+}
+
+.unstake-modal__title {
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0;
+  color: #111827;
+}
+
+.unstake-modal__close {
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unstake-modal__body {
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.unstake-modal__warning {
+  color: #dc2626;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.unstake-modal__info {
+  color: #111827;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.unstake-modal__foot {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #E6E8EB;
+}
+
+.btn--secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  flex: 1;
+}
+
+.btn--unstake-confirm {
+  background: #0066F7;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  flex: 1;
+}
