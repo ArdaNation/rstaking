@@ -77,6 +77,10 @@ export class ApiClient {
     try {
       const data = hasBody ? JSON.parse(text) : null;
       if (!res.ok) {
+        // For 202 status, return the data instead of throwing error
+        if (res.status === 202 && data) {
+          return data as T;
+        }
         if (data) return data as T;
         return ({ success: false, message: `POST ${path} failed: ${res.status}`, data: {} } as unknown) as T;
       }

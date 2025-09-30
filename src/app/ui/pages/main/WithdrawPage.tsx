@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { withdrawApi, type WithdrawHistoryItem } from '../../../shared/api/modules/withdraw';
+import { withdrawApi, type WithdrawHistoryItem } from '../../../../shared/api/modules/withdraw';
 import './withdraw.scss';
-import { useBalance } from '../../../shared/account/useBalance';
+import { useBalance } from '../../../../shared/account/useBalance';
 import toast from 'react-hot-toast';
-import ShutIcon from '../../../assets/shut.svg';
+import ShutIcon from '../../../../assets/shut.svg';
 
 export default function WithdrawPage() {
   const { t } = useTranslation();

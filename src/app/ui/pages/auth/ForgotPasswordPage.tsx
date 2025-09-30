@@ -1,9 +1,9 @@
 import { type FormEvent, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import LittleXrp from '../../../assets/little-xrp.svg';
+import LittleXrp from '../../../../assets/little-xrp.svg';
 import toast from 'react-hot-toast';
 import './login.scss';
-import { authApi } from '../../../shared/api/modules/auth';
+import { authApi } from '../../../../shared/api/modules/auth';
 
 function ForgotPasswordPage() {
   const [email, setEmail] = useState('');

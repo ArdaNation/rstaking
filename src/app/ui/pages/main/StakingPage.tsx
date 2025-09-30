@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { contractsApi, type ContractType, type ContractEntity, type ContractsStatisticResponse } from '../../../shared/api/modules/contracts';
-import { useBalance } from '../../../shared/account/useBalance';
+import { contractsApi, type ContractType, type ContractEntity, type ContractsStatisticResponse } from '../../../../shared/api/modules/contracts';
+import { useBalance } from '../../../../shared/account/useBalance';
 import './contracts.scss';
-import ShutIcon from '../../../assets/shut.svg';
-import { useDepositModal } from '../layout/DepositModalContext';
-import { emitBalanceReload, BALANCE_RELOAD_EVENT } from '../../../shared/events';
+import ShutIcon from '../../../../assets/shut.svg';
+import { useDepositModal } from '../../layout/DepositModalContext';
+import { emitBalanceReload, BALANCE_RELOAD_EVENT } from '../../../../shared/events';
 import toast from 'react-hot-toast';
 
-export default function ContractsPage() {
+export default function StakingPage() {
   const { t } = useTranslation();
   const [type, setType] = useState<ContractType>('unlimited');
   const [amount, setAmount] = useState<number>(0);
@@ -283,6 +283,47 @@ export default function ContractsPage() {
   return (
     <section className="contracts">
       <h1 className="section-title">Staking</h1>
+      
+      {/* How to Start Banner */}
+      <div className="how-to-start-banner">
+        <h2 className="how-to-start-banner__title">How to Start Staking XRP</h2>
+        
+        <div className="how-to-start-banner__steps">
+          <div className="how-to-start-banner__step">
+            <div className="how-to-start-banner__step-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2"/>
+                <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="how-to-start-banner__step-title">1. Fund Your Deposit</h3>
+            <p className="how-to-start-banner__step-description">Sign up in just a few minutes and make your first deposit in XRP.</p>
+          </div>
+          
+          <div className="how-to-start-banner__step">
+            <div className="how-to-start-banner__step-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="how-to-start-banner__step-title">2. Choose Your Plan</h3>
+            <p className="how-to-start-banner__step-description">Select the option that best fits your goals and investment style.</p>
+          </div>
+          
+          <div className="how-to-start-banner__step">
+            <div className="how-to-start-banner__step-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 3V21H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M18 9L12 15L6 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="how-to-start-banner__step-title">3. Start Earning Right Away</h3>
+            <p className="how-to-start-banner__step-description">Receive daily rewards and track your income anytime.</p>
+          </div>
+        </div>
+      </div>
+      
       <div>
 
       {/* <p className="section-desc">{t('contracts.staking')}</p> */}

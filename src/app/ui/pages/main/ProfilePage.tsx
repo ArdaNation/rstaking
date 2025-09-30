@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { systemApi } from '../../../shared/api/modules/system';
-import { accountApi } from '../../../shared/api/modules/account';
-import { authApi } from '../../../shared/api/modules/auth';
-import { useAuthToken } from '../../../shared/auth/useAuthToken';
-import { clearToken } from '../../../shared/auth/tokenStorage';
-import { useUser } from '../../providers/user/UserProvider';
+import { systemApi } from '../../../../shared/api/modules/system';
+import { accountApi } from '../../../../shared/api/modules/account';
+import { authApi } from '../../../../shared/api/modules/auth';
+import { useAuthToken } from '../../../../shared/auth/useAuthToken';
+import { clearToken } from '../../../../shared/auth/tokenStorage';
+import { useUser } from '../../../providers/user/UserProvider';
 import './withdraw.scss';
 import toast from 'react-hot-toast';
 

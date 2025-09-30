@@ -25,6 +25,24 @@ export interface ProfileResponse {
   };
 }
 
+export interface TwoFaGenerateResponse {
+  success: boolean;
+  message: string;
+  data: {
+    secret: string;
+  };
+}
+
+export interface TwoFaSetRequest {
+  twoFaToken: string;
+}
+
+export interface TwoFaSetResponse {
+  success: boolean;
+  message: string;
+  data: Record<string, never>;
+}
+
 export const accountApi = {
   async currentBalance(): Promise<BalanceResponse> {
     return api.get<BalanceResponse>('/private/account/balance/current');
@@ -38,6 +56,12 @@ export const accountApi = {
       '/private/account/profile/lang',
       { lang }
     );
+  },
+  async generate2FA(): Promise<TwoFaGenerateResponse> {
+    return api.post<TwoFaGenerateResponse, Record<string, never>>('/private/account/profile/2fa/generate', {});
+  },
+  async set2FA(request: TwoFaSetRequest): Promise<TwoFaSetResponse> {
+    return api.post<TwoFaSetResponse, TwoFaSetRequest>('/private/account/profile/2fa/set', request);
   },
 };
 

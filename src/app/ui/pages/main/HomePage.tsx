@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { systemApi } from '../../../shared/api/modules/system';
-import { accountApi } from '../../../shared/api/modules/account';
-import { useAuthToken } from '../../../shared/auth/useAuthToken';
-import { useUser } from '../../providers/user/UserProvider';
+import { systemApi } from '../../../../shared/api/modules/system';
+import { accountApi } from '../../../../shared/api/modules/account';
+import { useAuthToken } from '../../../../shared/auth/useAuthToken';
+import { useUser } from '../../../providers/user/UserProvider';
 
 function HomePage() {
   const { t } = useTranslation();

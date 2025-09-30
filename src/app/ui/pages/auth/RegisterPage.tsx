@@ -1,9 +1,9 @@
 import { type FormEvent, useMemo, useState } from 'react';
-import { authApi } from '../../../shared/api/modules/auth';
-import { setToken } from '../../../shared/auth/tokenStorage';
-import { HttpError } from '../../../shared/api/client';
+import { authApi } from '../../../../shared/api/modules/auth';
+import { setToken } from '../../../../shared/auth/tokenStorage';
+import { HttpError } from '../../../../shared/api/client';
 import { NavLink, useNavigate } from 'react-router-dom';
-import LittleXrp from '../../../assets/little-xrp.svg';
+import LittleXrp from '../../../../assets/little-xrp.svg';
 import toast from 'react-hot-toast';
 import './login.scss';
 
@@ -64,7 +64,7 @@ function RegisterPage() {
         const loginRes = await authApi.login({ email, password });
         if (loginRes.success && loginRes.data?.access) {
           setToken(loginRes.data.access);
-          navigate('/');
+          navigate('/how-to-start');
         } else {
           // Если автоматический логин не удался, перенаправляем на страницу логина
           navigate('/login');

@@ -47,6 +47,8 @@ export default function Shell({  }: ShellProps) {
   const [depositAddress, setDepositAddress] = useState<string>('');
   const [depositMemo, setDepositMemo] = useState<string>('');
   const [qrType, setQrType] = useState<'none' | 'address' | 'memo'>('address');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const requestedRef = useRef(false);
 
   const initials = ((profile?.name?.[0] ?? '').toUpperCase() + (profile?.surname?.[0] ?? '').toUpperCase())
@@ -63,6 +65,21 @@ export default function Shell({  }: ShellProps) {
       navigate('/login');
       toast.success('You have been logged out');
     }
+  };
+
+  const closeMobileMenu = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsMobileMenuOpen(false);
+      setIsClosing(false);
+    }, 300);
+  };
+
+  const handleMobileMenuClick = (callback: () => void) => {
+    return () => {
+      callback();
+      closeMobileMenu();
+    };
   };
 
   // useLayoutEffect(() => {
@@ -145,6 +162,7 @@ export default function Shell({  }: ShellProps) {
   return (
     <DepositModalContext.Provider value={{ openDepositWithAmount, closeDepositModal }}>
     <div className="shell" ref={shellRef} >
+      <div className="shell__container">
       {/* Mobile top bar */}
       <div className="shell__top">
         <div className="brand" onClick={() => window.open('https://rstaking.us/', '_blank')}>
@@ -152,10 +170,12 @@ export default function Shell({  }: ShellProps) {
           <span className="brand__name">RStaking</span>
         </div>
         <button
-          className="btn btn--deposit buy"
-          onClick={() => { void openDepositWithAmount(100); }}
+          className="btn btn--burger"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
-          Deposit
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </button>
       </div>
       <aside className="shell__sidebar">
@@ -169,7 +189,15 @@ export default function Shell({  }: ShellProps) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8M14 2L20 8M14 2V8H20M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            {t('nav.contracts')}
+            Staking
+          </NavLink>
+          <NavLink to="/how-to-start">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+              <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40913C11.0108 7.05016 11.7289 6.91894 12.4272 7.03871C13.1255 7.15849 13.7588 7.52152 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M12 17H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            How to Start
           </NavLink>
           <NavLink to="/withdraw">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -183,12 +211,14 @@ export default function Shell({  }: ShellProps) {
             </svg>
             {t('nav.history')}
           </NavLink>
-          {/* <NavLink to="/support">
+          <NavLink to="/security">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M21 11.5C21.0034 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7118 18.3098 17.8992 16.9674 18.7293C15.6251 19.5594 14.0782 19.9994 12.5 20C11.1801 20.0035 9.87812 19.6951 8.7 19.1L3 21L4.9 15.3C4.30493 14.1219 3.99656 12.8199 4 11.5C4.00061 9.92179 4.44061 8.37488 5.27072 7.03258C6.10083 5.69028 7.28825 4.6056 8.7 3.90003C9.87812 3.30496 11.1801 2.99659 12.5 3.00003H13C15.0843 3.11502 17.053 3.99479 18.5291 5.47089C20.0052 6.94699 20.885 8.91568 21 11V11.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+              <circle cx="12" cy="16" r="1" fill="currentColor"/>
+              <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            {t('nav.support')}
-          </NavLink> */}
+            Security
+          </NavLink>
         </nav>
         <div className="balance" ref={balanceRef}>
           <div className="balance__inner">
@@ -213,33 +243,71 @@ export default function Shell({  }: ShellProps) {
       </main>
 
       <nav className="shell__bottom">
-        <NavLink to="/" end>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8M14 2L20 8M14 2V8H20M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span>{t('nav.contracts')}</span>
-        </NavLink>
-        <NavLink to="/withdraw">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 15L21 19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21L5 21C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19L3 15M7 10L12 15M12 15L17 10M12 15L12 3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span>{t('nav.withdraw')}</span>
-        </NavLink>
-        <NavLink to="/history">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 17L12 22L22 17M2 12L12 17L22 12M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span>{t('nav.history')}</span>
-        </NavLink>
-        <NavLink to="/profile">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 17L21 12L16 7M21 12H3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span>{t('nav.profile')}</span>
-        </NavLink>
-        <NavLink to="">
-        </NavLink>
+        <button
+          className="btn btn--deposit btn--deposit-mobile"
+          onClick={() => { void openDepositWithAmount(100); }}
+        >
+          Deposit
+        </button>
       </nav>
+
+      {/* Mobile burger menu */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu" role="dialog" aria-modal="true" onClick={closeMobileMenu}>
+          <div className={`mobile-menu__content ${isClosing ? 'mobile-menu__content--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-menu__head">
+              <div className="mobile-menu__title">Menu</div>
+              <button className="mobile-menu__close" aria-label="Close" onClick={closeMobileMenu}>
+                <img src={ShutIcon} alt="Close" />
+              </button>
+            </div>
+            <div className="mobile-menu__body">
+              <nav className="mobile-menu__nav">
+                <NavLink to="/" end onClick={handleMobileMenuClick(() => {})}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8M14 2L20 8M14 2V8H20M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Staking
+                </NavLink>
+                <NavLink to="/how-to-start" onClick={handleMobileMenuClick(() => {})}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40913C11.0108 7.05016 11.7289 6.91894 12.4272 7.03871C13.1255 7.15849 13.7588 7.52152 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 17H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  How to Start
+                </NavLink>
+                <NavLink to="/withdraw" onClick={handleMobileMenuClick(() => {})}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 15L21 19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21L5 21C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19L3 15M7 10L12 15M12 15L17 10M12 15L12 3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {t('nav.withdraw')}
+                </NavLink>
+                <NavLink to="/history" onClick={handleMobileMenuClick(() => {})}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 17L12 22L22 17M2 12L12 17L22 12M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {t('nav.history')}
+                </NavLink>
+                <NavLink to="/security" onClick={handleMobileMenuClick(() => {})}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="12" cy="16" r="1" fill="currentColor"/>
+                    <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Security
+                </NavLink>
+                <NavLink to="/profile" onClick={handleMobileMenuClick(() => {})}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 17L21 12L16 7M21 12H3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {t('nav.profile')}
+                </NavLink>
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isDepositOpen && (
         <div className="modal" role="dialog" aria-modal="true">
@@ -312,6 +380,7 @@ export default function Shell({  }: ShellProps) {
           </div>
         </div>
       )}
+      </div>
     </div>
     </DepositModalContext.Provider>
   );

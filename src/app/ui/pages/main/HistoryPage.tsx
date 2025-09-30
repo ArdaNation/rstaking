@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './withdraw.scss';
-import { withdrawApi } from '../../../shared/api/modules/withdraw';
-import { api } from '../../../shared/api/client';
+import { withdrawApi } from '../../../../shared/api/modules/withdraw';
+import { api } from '../../../../shared/api/client';
 
 type InnerRow = {
   puid: string;

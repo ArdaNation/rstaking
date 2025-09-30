@@ -1,9 +1,9 @@
 import { type FormEvent, useState } from 'react';
-import { authApi } from '../../../shared/api/modules/auth';
-import { setToken } from '../../../shared/auth/tokenStorage';
-import { HttpError } from '../../../shared/api/client';
+import { authApi } from '../../../../shared/api/modules/auth';
+import { setToken } from '../../../../shared/auth/tokenStorage';
+import { HttpError } from '../../../../shared/api/client';
 import { NavLink, useNavigate } from 'react-router-dom';
-import LittleXrp from '../../../assets/little-xrp.svg';
+import LittleXrp from '../../../../assets/little-xrp.svg';
 import toast from 'react-hot-toast';
 import './login.scss';
 
@@ -40,11 +40,21 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [twoFaToken, setTwoFaToken] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const performLogin = async (email: string, password: string, twoFaToken?: string) => {
     try {
-      const res = await authApi.login({ email, password });
+      const res = await authApi.login({ email, password, twoFaToken });
+      
+      // Check if response indicates 2FA is required (message mentions 2FA)
+      const msg = (res?.message ?? '').toString().toLowerCase();
+      if (msg.includes('2fa')) {
+        setShow2FAModal(true);
+        return false;
+      }
+      
       if (!res.success || !res.data?.access) {
         if (res.message === 'Please verify your email address') {
           try {
@@ -56,26 +66,59 @@ function LoginPage() {
         } else {
           toast.error(res.message || 'Login failed');
         }
-        return;
+        return false;
       }
+      
       setToken(res.data.access);
       navigate('/');
+      return true;
     } catch (err: any) {
-      if (err instanceof HttpError && err.status === 417) {
-        if (err.message === 'Please verify your email address') {
-          try {
-            await authApi.requestEmailVerification({ email, password });
-          } catch (e: any) {
-            console.error(e);
+      if (err instanceof HttpError) {
+        if (err.status === 202) {
+          // 2FA required
+          setShow2FAModal(true);
+          return false;
+        } else if (err.status === 417) {
+          if (err.message === 'Please verify your email address') {
+            try {
+              await authApi.requestEmailVerification({ email, password });
+            } catch (e: any) {
+              console.error(e);
+            }
+            toast.error(err.message || 'Please verify your email address');
+          } else {
+            console.error(err);
           }
-          toast.error(err.message || 'Please verify your email address');
-        } else {
-          console.error(err);
+          return false;
         }
-        return;
       }
       console.error(err);
+      toast.error('Login failed');
+      return false;
     }
+  };
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    await performLogin(email, password);
+    setIsSubmitting(false);
+  };
+
+  const onSubmit2FA = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!twoFaToken || twoFaToken.length !== 6) {
+      toast.error('Please enter a valid 6-digit code');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    const success = await performLogin(email, password, twoFaToken);
+    if (success) {
+      setShow2FAModal(false);
+      setTwoFaToken('');
+    }
+    setIsSubmitting(false);
   };
 
   
@@ -150,7 +193,9 @@ function LoginPage() {
                 {isPasswordVisible ? iconEyeOff : iconEyeEmpty}
               </button>
             </label>
-            <button type="submit" className="btn btn--primary btn--block">Log in</button>
+            <button type="submit" className="btn btn--primary btn--block" disabled={isSubmitting}>
+              {isSubmitting ? 'Logging in...' : 'Log in'}
+            </button>
           </form>
           <div className="auth__foot">
             <NavLink to="/forgot" className="auth__link">Forgot password</NavLink>
@@ -189,6 +234,58 @@ function LoginPage() {
         </div> */}
         <div className="auth__copy">Copyright © 2023-2025 RStaking Finance Global LTD</div>
       </footer>
+
+      {/* 2FA Modal */}
+      {show2FAModal && (
+        <div className="modal" role="dialog" aria-modal="true" onClick={() => setShow2FAModal(false)}>
+          <div className="modal__content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal__head">
+              <div className="modal__title">Two-Factor Authentication</div>
+              <button className="modal__close" aria-label="Close" onClick={() => setShow2FAModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="modal__body">
+              <p className="modal__description">
+                Please enter the 6-digit code from your authenticator app to complete the login.
+              </p>
+              <form onSubmit={onSubmit2FA}>
+                <label className="modal__field">
+                  <span>Authentication Code</span>
+                  <input
+                    type="text"
+                    value={twoFaToken}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                      setTwoFaToken(value);
+                    }}
+                    placeholder="000000"
+                    maxLength={6}
+                    className="modal__input"
+                    autoFocus
+                  />
+                </label>
+                <div className="modal__foot">
+                  <button 
+                    type="button" 
+                    className="btn btn--secondary" 
+                    onClick={() => setShow2FAModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="btn btn--primary"
+                    disabled={isSubmitting || twoFaToken.length !== 6}
+                  >
+                    {isSubmitting ? 'Verifying...' : 'Verify & Login'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
