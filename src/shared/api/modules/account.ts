@@ -43,6 +43,28 @@ export interface TwoFaSetResponse {
   data: Record<string, never>;
 }
 
+export interface Session {
+  id: number;
+  token: string;
+  expiresAt: string;
+  country: string;
+  timezone: string;
+  ip: string;
+  deviceId: string;
+}
+
+export interface ActiveSessionsResponse {
+  success: boolean;
+  message: string;
+  data: Session[];
+  server: {
+    time: string;
+    version: string;
+    commit: string;
+    date: string;
+  };
+}
+
 export const accountApi = {
   async currentBalance(): Promise<BalanceResponse> {
     return api.get<BalanceResponse>('/private/account/balance/current');
@@ -62,6 +84,9 @@ export const accountApi = {
   },
   async set2FA(request: TwoFaSetRequest): Promise<TwoFaSetResponse> {
     return api.post<TwoFaSetResponse, TwoFaSetRequest>('/private/account/profile/2fa/set', request);
+  },
+  async getActiveSessions(): Promise<ActiveSessionsResponse> {
+    return api.get<ActiveSessionsResponse>('/private/account/session/active');
   },
 };
 

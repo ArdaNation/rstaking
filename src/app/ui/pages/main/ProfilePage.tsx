@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { systemApi } from '../../../../shared/api/modules/system';
-import { accountApi } from '../../../../shared/api/modules/account';
+import { accountApi, type Session } from '../../../../shared/api/modules/account';
 import { authApi } from '../../../../shared/api/modules/auth';
 import { useAuthToken } from '../../../../shared/auth/useAuthToken';
 import { clearToken } from '../../../../shared/auth/tokenStorage';
@@ -17,6 +17,8 @@ export default function ProfilePage() {
   const { profile } = useUser();
   const [_health, setHealth] = useState<string>('');
   const [_balance, setBalance] = useState<number | null>(null);
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [isLoadingSessions, setIsLoadingSessions] = useState(false);
   const initials = ((profile?.name?.[0] ?? '').toUpperCase() + (profile?.surname?.[0] ?? '').toUpperCase())
     || (profile?.name ? profile.name.slice(0, 2).toUpperCase() : 'U');
   useEffect(() => {
@@ -45,6 +47,25 @@ export default function ProfilePage() {
     })();
   }, [token]);
 
+  useEffect(() => {
+    if (!token) {
+      setSessions([]);
+      return;
+    }
+    setIsLoadingSessions(true);
+    void (async () => {
+      try {
+        const res = await accountApi.getActiveSessions();
+        setSessions(res.data);
+      } catch (error) {
+        console.error('Failed to load sessions:', error);
+        setSessions([]);
+      } finally {
+        setIsLoadingSessions(false);
+      }
+    })();
+  }, [token]);
+
   const handleLogout = async () => {
     try {
       await authApi.logout();
@@ -57,6 +78,32 @@ export default function ProfilePage() {
       toast.success('You have been logged out');
     }
   };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getLocation = (session: Session) => {
+    if (session.country === 'n/a') {
+      return 'Unknown';
+    }
+    return session.country;
+  };
+
+  const getDeviceType = (session: Session) => {
+    if (session.deviceId) {
+      return 'Mobile App';
+    }
+    return 'Web Browser';
+  };
+
 
   return (
     <section className="withdraw">
@@ -124,6 +171,46 @@ export default function ProfilePage() {
               Logout
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Recent Login Activity */}
+      <div className="table" >
+        <div className="table__head">
+          <h2 style={{ fontSize: 18, fontWeight: 600, margin: 0 }}>Recent Login Activity</h2>
+        </div>
+        
+        <div className="table__body" style={{ paddingTop: 8 }}>
+          {isLoadingSessions ? (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <p>Loading sessions...</p>
+            </div>
+          ) : sessions.length > 0 ? (
+            <table className="profile-table">
+              <thead>
+                <tr>
+                  <th className="meta__label">Date & Time</th>
+                  <th className="meta__label">IP Address</th>
+                  <th className="meta__label">Location</th>
+                  <th className="meta__label">Device</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sessions.map((session) => (
+                  <tr key={session.id}>
+                    <td className="meta__value">{formatDate(session.expiresAt)}</td>
+                    <td className="meta__value">{session.ip}</td>
+                    <td className="meta__value">{getLocation(session)}</td>
+                    <td className="meta__value">{getDeviceType(session)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <p>No active sessions found</p>
+            </div>
+          )}
         </div>
       </div>
     </section>

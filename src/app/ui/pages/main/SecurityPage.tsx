@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { accountApi } from '../../../../shared/api/modules/account';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
@@ -8,30 +8,53 @@ export default function SecurityPage() {
   const [secret, setSecret] = useState<string>('');
   const [qrCodeVisible, setQrCodeVisible] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 
   const generateQRCode = async () => {
-    setIsGenerating(true);
     try {
       const response = await accountApi.generate2FA();
-      setSecret(response.data.secret);
-      setQrCodeVisible(true);
-      toast.success(response.message);
-    } catch (error: any) {
-      console.error('Failed to generate QR code:', error);
       
-      // Check if 2FA is already enabled
-      if (error?.response?.status === 417 || 
-          (error?.response?.data?.message && error.response.data.message.includes('2FA has already been set'))) {
-        toast.error('2FA already enabled');
-      } else {
-        toast.error('Failed to generate QR code');
+      console.log('2FA generate response:', response);
+      
+      // Check if the response indicates 2FA is already set
+      if (!response.success && response.message) {
+        const errorMessage = response.message.toLowerCase();
+        if (errorMessage.includes('2fa has already been set') ||
+            errorMessage.includes('already') ||
+            errorMessage.includes('set') ||
+            errorMessage.includes('enabled') ||
+            errorMessage.includes('active')) {
+          setIs2FAEnabled(true);
+          console.log('2FA is already enabled, setting is2FAEnabled to true');
+          return;
+        } else {
+          console.log('2FA generation failed:', response);
+          toast.error('Failed to generate QR code');
+          return;
+        }
       }
-    } finally {
-      setIsGenerating(false);
+      
+      // If successful, show QR code
+      if (response.success && response.data?.secret) {
+        setSecret(response.data.secret);
+        setQrCodeVisible(true);
+        if (!response.message.includes('set')) {
+          toast.success(response.message);
+        }
+      }
+    } catch (error: any) {
+      console.error('Unexpected error in generateQRCode:', error);
+      toast.error('Failed to generate QR code');
     }
   };
+
+  useEffect(() => {
+    generateQRCode();
+  }, []);
+
+  // Debug log to see the current state
+  console.log('SecurityPage state:', { is2FAEnabled, qrCodeVisible, secret: !!secret });
 
   const copyToClipboard = async () => {
     try {
@@ -51,11 +74,18 @@ export default function SecurityPage() {
 
     setIsVerifying(true);
     try {
-      await accountApi.set2FA({ twoFaToken: verificationCode });
-      toast.success('2FA has been successfully enabled!');
-      setVerificationCode('');
-      setQrCodeVisible(false);
-      setSecret('');
+      const response = await accountApi.set2FA({ twoFaToken: verificationCode });
+      
+      // Check if 2FA was successfully set
+      if (response.success) {
+        toast.success('2FA has been successfully enabled!');
+        setVerificationCode('');
+        setQrCodeVisible(false);
+        setSecret('');
+        setIs2FAEnabled(true); // Show the 2FA enabled status screen
+      } else {
+        toast.error('Failed to verify code. Please try again.');
+      }
     } catch (error) {
       console.error('Failed to set 2FA:', error);
       toast.error('Failed to verify code. Please try again.');
@@ -77,122 +107,142 @@ export default function SecurityPage() {
         </div>
 
 
-        <div className="security__section">
-          <h2 className="security__section-title">2FA Setup</h2>
-          
-          <div className="security__steps">
-            <div className="security__step">
-              <div className="security__step-number">1</div>
-              <div className="security__step-content">
-                <h3 className="security__step-title">Install Authenticator App</h3>
-                <p className="security__step-description">
-                  Example: Google Authenticator, Microsoft Authenticator, Authy.
-                </p>
-              </div>
-            </div>
-
-            <div className="security__step">
-              <div className="security__step-number">2</div>
-              <div className="security__step-content">
-                <h3 className="security__step-title">Scan QR Code</h3>
-                <p className="security__step-description">
-                  In the app → Add account → Scan QR code.<br />
-                  (If scanning fails, enter the key manually.)
-                </p>
-              </div>
-            </div>
-
-            <div className="security__step">
-              <div className="security__step-number">3</div>
-              <div className="security__step-content">
-                <h3 className="security__step-title">Enter Code</h3>
-                <p className="security__step-description">
-                  Type the 6-digit code from the app and click Verify.
-                </p>
-              </div>
-            </div>
-
-            <div className="security__step">
-              <div className="security__step-number">4</div>
-              <div className="security__step-content">
-                <h3 className="security__step-title">Save Backup Codes</h3>
-                <p className="security__step-description">
-                  Keep them safe. Use if you lose your phone.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {!qrCodeVisible && (
-            <div className="security__generate">
-              <button 
-                className="btn btn--primary security__generate-btn"
-                onClick={generateQRCode}
-                disabled={isGenerating}
-              >
-                {isGenerating ? 'Generating...' : 'Generate QR Code'}
-              </button>
-            </div>
-          )}
-
-          {qrCodeVisible && secret && (
-            <div className="security__qr-section">
-              <div className="security__qr-container">
-                <div className="security__qr-code">
-                  <QRCodeSVG
-                    value={`otpauth://totp/RStaking?secret=${secret}&issuer=RStaking`}
-                    size={200}
-                    includeMargin
-                  />
+        {!is2FAEnabled && (
+          <div className="security__section">
+            <h2 className="security__section-title">2FA Setup</h2>
+            
+            <div className="security__steps">
+              <div className="security__step">
+                <div className="security__step-number">1</div>
+                <div className="security__step-content">
+                  <h3 className="security__step-title">Install Authenticator App</h3>
+                  <p className="security__step-description">
+                    Example: Google Authenticator, Microsoft Authenticator, Authy.
+                  </p>
                 </div>
-                
-                <div className="security__secret">
-                  <label className="security__secret-label">Secret Key:</label>
-                  <div className="security__secret-input-group">
-                    <input 
-                      type="text" 
-                      value={secret} 
-                      readOnly 
-                      className="security__secret-input"
+              </div>
+
+              <div className="security__step">
+                <div className="security__step-number">2</div>
+                <div className="security__step-content">
+                  <h3 className="security__step-title">Scan QR Code</h3>
+                  <p className="security__step-description">
+                    In the app → Add account → Scan QR code.<br />
+                    (If scanning fails, enter the key manually.)
+                  </p>
+                </div>
+              </div>
+
+              <div className="security__step">
+                <div className="security__step-number">3</div>
+                <div className="security__step-content">
+                  <h3 className="security__step-title">Enter Code</h3>
+                  <p className="security__step-description">
+                    Type the 6-digit code from the app and click Verify.
+                  </p>
+                </div>
+              </div>
+
+              <div className="security__step">
+                <div className="security__step-number">4</div>
+                <div className="security__step-content">
+                  <h3 className="security__step-title">Save Backup Codes</h3>
+                  <p className="security__step-description">
+                    Keep them safe. Use if you lose your phone.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* {isGenerating && (
+              <div className="security__loading">
+                <p>Generating QR code...</p>
+              </div>
+            )} */}
+
+            {qrCodeVisible && secret && (
+              <div className="security__qr-section">
+                <div className="security__qr-container">
+                  <div className="security__qr-code">
+                    <QRCodeSVG
+                      value={`otpauth://totp/RStaking?secret=${secret}&issuer=RStaking`}
+                      size={200}
+                      includeMargin
+                    />
+                  </div>
+                  
+                  <div className="security__secret">
+                    <label className="security__secret-label">Secret Key:</label>
+                    <div className="security__secret-input-group">
+                      <input 
+                        type="text" 
+                        value={secret} 
+                        readOnly 
+                        className="security__secret-input"
+                      />
+                      <button 
+                        className="btn btn--secondary security__copy-btn"
+                        onClick={copyToClipboard}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="security__verification">
+                  <label className="security__verification-label">
+                    Enter 6-digit code from your authenticator app:
+                  </label>
+                  <div className="security__verification-group">
+                    <input
+                      type="text"
+                      value={verificationCode}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        setVerificationCode(value);
+                      }}
+                      placeholder="000000"
+                      className="security__verification-input"
+                      maxLength={6}
                     />
                     <button 
-                      className="btn btn--secondary security__copy-btn"
-                      onClick={copyToClipboard}
+                      className="btn btn--primary security__verify-btn"
+                      onClick={verifyAndSet2FA}
+                      disabled={isVerifying || verificationCode.length !== 6}
                     >
-                      Copy
+                      {isVerifying ? 'Verifying...' : 'Verify & Enable 2FA'}
                     </button>
                   </div>
                 </div>
               </div>
+            )}
+          </div>
+        )}
 
-              <div className="security__verification">
-                <label className="security__verification-label">
-                  Enter 6-digit code from your authenticator app:
-                </label>
-                <div className="security__verification-group">
-                  <input
-                    type="text"
-                    value={verificationCode}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                      setVerificationCode(value);
-                    }}
-                    placeholder="000000"
-                    className="security__verification-input"
-                    maxLength={6}
-                  />
-                  <button 
-                    className="btn btn--primary security__verify-btn"
-                    onClick={verifyAndSet2FA}
-                    disabled={isVerifying || verificationCode.length !== 6}
-                  >
-                    {isVerifying ? 'Verifying...' : 'Verify & Enable 2FA'}
-                  </button>
+        {is2FAEnabled && (
+          <div className="security__section">
+            <h2 className="security__section-title">✅2FA Status: Active</h2>
+            <div className="security__status">
+              <div className="security__status-content">
+                <p className="security__status-message">
+                  Two-Factor Authentication is currently enabled and protecting your account.
+                </p>
+                <div className="security__status-details">
+                  <p className="security__status-detail">
+                    • Your account is secured with an additional authentication layer
+                  </p>
+                  <p className="security__status-detail">
+                    • You'll need your authenticator app to log in from new devices
+                  </p>
+                  <p className="security__status-detail">
+                    • Keep your backup codes safe in case you lose access to your authenticator
+                  </p>
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

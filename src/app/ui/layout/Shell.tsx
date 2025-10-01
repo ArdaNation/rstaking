@@ -231,7 +231,15 @@ export default function Shell({  }: ShellProps) {
         <div className={`profile${location.pathname.startsWith('/profile') ? ' active' : ''}`}>
           <span className="profile__left" onClick={() => navigate('/profile')}>
             <span className="avatar">{initials}</span>
-            <span className="name">{profile ? `${profile.name} ${profile.surname}` : 'User'}</span>
+            <span className="name">
+              {profile ? (() => {
+                const fullName = `${profile.name} ${profile.surname}`;
+                if (fullName.length > 15) {
+                  return fullName.substring(0, 12) + '...';
+                }
+                return fullName;
+              })() : 'User'}
+            </span>
           </span>
           <img className="profile__logoff" src={IconLogoff} alt="log off" onClick={handleLogout} />
         </div>
