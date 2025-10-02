@@ -1,4 +1,5 @@
 import { api } from '../client';
+import { trackContractAction } from '../../analytics/gtag';
 
 export type ContractType = 'unlimited' | 'yearly' | 'monthly' | string;
 
@@ -131,16 +132,28 @@ export interface ResumeUnstakedContractResponse {
 
 export const contractsApi = {
   async buy(payload: BuyContractRequest): Promise<BuyContractResponse> {
-    return api.post<BuyContractResponse, BuyContractRequest>('/private/account/contracts/buy', payload);
+    const response = await api.post<BuyContractResponse, BuyContractRequest>('/private/account/contracts/buy', payload);
+    if (response.success) {
+      trackContractAction('buy', payload.type, payload.amount);
+    }
+    return response;
   },
   async unstake(payload: UnstakeContractRequest): Promise<UnstakeContractResponse> {
-    return api.post<UnstakeContractResponse, UnstakeContractRequest>('/private/account/contracts/unstake', payload);
+    const response = await api.post<UnstakeContractResponse, UnstakeContractRequest>('/private/account/contracts/unstake', payload);
+    if (response.success) {
+      trackContractAction('unstake');
+    }
+    return response;
   },
   async resumeUnstakedContract(payload: ResumeUnstakedContractRequest): Promise<ResumeUnstakedContractResponse> {
-    return api.post<ResumeUnstakedContractResponse, ResumeUnstakedContractRequest>(
+    const response = await api.post<ResumeUnstakedContractResponse, ResumeUnstakedContractRequest>(
       '/private/account/contracts/resume-unstaked-contract',
       payload
     );
+    if (response.success) {
+      trackContractAction('resume');
+    }
+    return response;
   },
   async active(params: { offset?: number; limit?: number; order?: 'asc' | 'desc' } = {}): Promise<ContractsListResponse> {
     const { offset = 0, limit = 15, order = 'desc' } = params;

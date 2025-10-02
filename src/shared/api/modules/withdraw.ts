@@ -1,4 +1,5 @@
 import { api } from '../client';
+import { trackWithdrawAction } from '../../analytics/gtag';
 
 export interface WithdrawRequestBody {
   amount: number;
@@ -51,14 +52,22 @@ export interface CancelWithdrawResponse {
 
 export const withdrawApi = {
   async request(body: WithdrawRequestBody): Promise<WithdrawRequestResponse> {
-    return api.post<WithdrawRequestResponse, WithdrawRequestBody>('/private/account/withdraw-requests/request', body);
+    const response = await api.post<WithdrawRequestResponse, WithdrawRequestBody>('/private/account/withdraw-requests/request', body);
+    if (response.success) {
+      trackWithdrawAction('request', body.amount);
+    }
+    return response;
   },
   async history(params: { offset?: number; limit?: number; order?: 'asc' | 'desc' } = {}): Promise<WithdrawHistoryResponse> {
     const { offset = 0, limit = 20, order = 'desc' } = params;
     return api.get<WithdrawHistoryResponse>(`/private/account/withdraw-requests/history?offset=${offset}&limit=${limit}&order=${order}`);
   },
   async cancel(body: ICancelWithdrawRequest): Promise<CancelWithdrawResponse> {
-    return api.post<CancelWithdrawResponse, ICancelWithdrawRequest>('/private/account/withdraw-requests/cancel', body);
+    const response = await api.post<CancelWithdrawResponse, ICancelWithdrawRequest>('/private/account/withdraw-requests/cancel', body);
+    if (response.success) {
+      trackWithdrawAction('cancel');
+    }
+    return response;
   },
 };
 

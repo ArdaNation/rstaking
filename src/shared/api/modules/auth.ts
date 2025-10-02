@@ -1,4 +1,5 @@
 import { api } from '../client';
+import { trackAuthAction } from '../../analytics/gtag';
 
 export interface LoginRequest {
   email: string;
@@ -69,33 +70,57 @@ export interface RequestEmailVerificationResponse {
 
 export const authApi = {
   async login(payload: LoginRequest): Promise<LoginResponse> {
-    return api.post<LoginResponse, LoginRequest>('/public/account/login', payload);
+    const response = await api.post<LoginResponse, LoginRequest>('/public/account/login', payload);
+    if (response.success) {
+      trackAuthAction('login');
+    }
+    return response;
   },
   async register(payload: RegisterRequest): Promise<RegisterResponse> {
-    return api.post<RegisterResponse, RegisterRequest>('/public/account/create', payload);
+    const response = await api.post<RegisterResponse, RegisterRequest>('/public/account/create', payload);
+    if (response.success) {
+      trackAuthAction('register');
+    }
+    return response;
   },
   async logout(): Promise<LogoutResponse> {
-    return api.post<LogoutResponse, {}>('/private/account/session/logout', {});
+    const response = await api.post<LogoutResponse, Record<string, never>>('/private/account/session/logout', {});
+    if (response.success) {
+      trackAuthAction('logout');
+    }
+    return response;
   },
   async resetPasswordRequest(payload: ResetPasswordRequestPayload): Promise<ResetPasswordRequestResponse> {
-    return api.post<ResetPasswordRequestResponse, ResetPasswordRequestPayload>(
+    const response = await api.post<ResetPasswordRequestResponse, ResetPasswordRequestPayload>(
       '/public/account/reset-password/request',
       payload
     );
+    if (response.success) {
+      trackAuthAction('reset_password');
+    }
+    return response;
   },
   async resetPasswordVerify(payload: ResetPasswordVerifyPayload): Promise<ResetPasswordVerifyResponse> {
-    return api.post<ResetPasswordVerifyResponse, ResetPasswordVerifyPayload>(
+    const response = await api.post<ResetPasswordVerifyResponse, ResetPasswordVerifyPayload>(
       '/public/account/reset-password/verify',
       payload
     );
+    if (response.success) {
+      trackAuthAction('reset_password');
+    }
+    return response;
   },
   async requestEmailVerification(
     payload: RequestEmailVerificationPayload
   ): Promise<RequestEmailVerificationResponse> {
-    return api.post<RequestEmailVerificationResponse, RequestEmailVerificationPayload>(
+    const response = await api.post<RequestEmailVerificationResponse, RequestEmailVerificationPayload>(
       '/public/account/request-email-verification',
       payload
     );
+    if (response.success) {
+      trackAuthAction('verify_email');
+    }
+    return response;
   },
 };
 

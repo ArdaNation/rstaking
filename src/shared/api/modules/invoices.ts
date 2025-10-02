@@ -1,4 +1,5 @@
 import { api } from '../client';
+import { trackInvoiceAction } from '../../analytics/gtag';
 
 export interface InvoiceRequestBody {
   amount: number;
@@ -34,13 +35,25 @@ export interface InvoiceRequestResponse {
 
 export const invoicesApi = {
   async request(body: InvoiceRequestBody): Promise<InvoiceRequestResponse> {
-    return api.post<InvoiceRequestResponse, InvoiceRequestBody>('/private/account/invoices/request', body);
+    const response = await api.post<InvoiceRequestResponse, InvoiceRequestBody>('/private/account/invoices/request', body);
+    if (response.success) {
+      trackInvoiceAction('request', body.amount);
+    }
+    return response;
   },
   async getByPuid(): Promise<InvoiceRequestResponse> {
-    return api.get<InvoiceRequestResponse>(`/private/account/invoices/request`);
+    const response = await api.get<InvoiceRequestResponse>(`/private/account/invoices/request`);
+    if (response.success) {
+      trackInvoiceAction('get');
+    }
+    return response;
   },
   async getById(body: InvoiceByIdRequest): Promise<InvoiceRequestResponse> {
-    return api.post<InvoiceRequestResponse, InvoiceByIdRequest>('/private/account/invoices/invoice/by/id', body);
+    const response = await api.post<InvoiceRequestResponse, InvoiceByIdRequest>('/private/account/invoices/invoice/by/id', body);
+    if (response.success) {
+      trackInvoiceAction('get');
+    }
+    return response;
   },
 };
 
